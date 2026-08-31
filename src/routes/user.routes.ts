@@ -24,8 +24,10 @@ router.use(authenticate);
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Lista de usuarios }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  */
-router.get('/', (req, res, next) => userController.getAll(req, res, next));
+router.get('/', authorize('ADMIN'), (req, res, next) => userController.getAll(req, res, next));
 
 /**
  * @swagger
@@ -41,6 +43,8 @@ router.get('/', (req, res, next) => userController.getAll(req, res, next));
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Usuario }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
  *       404: { description: No encontrado }
  */
 router.get('/:id', validate(userIdParamSchema), (req, res, next) => userController.getById(req, res, next));
@@ -66,11 +70,16 @@ router.get('/:id', validate(userIdParamSchema), (req, res, next) => userControll
  *             properties:
  *               name: { type: string }
  *               email: { type: string }
- *               role: { type: string, enum: [user, admin] }
+ *               role: { type: string, enum: [ADMIN, GESTOR_SOLICITUDES] }
  *     responses:
  *       200: { description: Usuario actualizado }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
+ *       409: { description: Email ya registrado }
  */
-router.put('/:id', validate(updateUserSchema), (req, res, next) => userController.update(req, res, next));
+router.put('/:id', validate(updateUserSchema), authorize('ADMIN'), (req, res, next) => userController.update(req, res, next));
 
 /**
  * @swagger
@@ -86,8 +95,11 @@ router.put('/:id', validate(updateUserSchema), (req, res, next) => userControlle
  *         schema: { type: string }
  *     responses:
  *       200: { description: Eliminado }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
  *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
  */
-router.delete('/:id', authorize('admin'), validate(userIdParamSchema), (req, res, next) => userController.delete(req, res, next));
+router.delete('/:id', validate(userIdParamSchema), authorize('ADMIN'), (req, res, next) => userController.delete(req, res, next));
 
 export default router;

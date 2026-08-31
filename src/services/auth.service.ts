@@ -1,14 +1,19 @@
 import { userRepository } from '../repositories/user.repository';
+import { UserRole } from '../models/user.model';
 import { hashPassword, comparePassword } from '../utils/password';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/jwt';
 
+function createHttpError(message: string, statusCode: number): Error & { statusCode: number } {
+  const err = new Error(message) as Error & { statusCode: number };
+  err.statusCode = statusCode;
+  return err;
+}
+
 export class AuthService {
-  async register(data: { name: string; email: string; password: string; role?: 'user' | 'admin' }) {
-    const exists = await userRepository.findByEmail(data.email);
-    if (exists) {
-      const err: any = new Error('Email ya registrado');
-      err.statusCode = 409;
-      throw err;
+  async register(data: { name: string; email: string; password: string; role?: UserRole }) {
+    const existsAny = await userRepository.findByEmailAny(data.email);
+    if (existsAny) {
+      throw createHttpError('Email ya registrado', 409);
     }
     const hashed = await hashPassword(data.password);
     const user = await userRepository.create({ ...data, password: hashed });
@@ -23,15 +28,11 @@ export class AuthService {
   async login(data: { email: string; password: string }) {
     const user = await userRepository.findByEmail(data.email);
     if (!user) {
-      const err: any = new Error('Credenciales inválidas');
-      err.statusCode = 401;
-      throw err;
+      throw createHttpError('Credenciales inválidas', 401);
     }
     const valid = await comparePassword(data.password, user.password);
     if (!valid) {
-      const err: any = new Error('Credenciales inválidas');
-      err.statusCode = 401;
-      throw err;
+      throw createHttpError('Credenciales inválidas', 401);
     }
     const payload = { id: user.id, email: user.email, role: user.role };
     const accessToken = signAccessToken(payload);
@@ -42,31 +43,24 @@ export class AuthService {
   async refresh(refreshToken: string) {
     try {
       const payload = verifyRefreshToken(refreshToken);
-      // Opcional: verificar que usuario aún existe
       const user = await userRepository.findById(payload.id);
       if (!user) {
-        const err: any = new Error('Usuario no encontrado');
-        err.statusCode = 401;
-        throw err;
+        throw createHttpError('Usuario no encontrado', 401);
       }
       const newPayload = { id: user.id, email: user.email, role: user.role };
       const accessToken = signAccessToken(newPayload);
       const newRefreshToken = signRefreshToken(newPayload);
       return { accessToken, refreshToken: newRefreshToken };
-    } catch (e: any) {
-      if (e.statusCode) throw e;
-      const err: any = new Error('Refresh token inválido');
-      err.statusCode = 401;
-      throw err;
+    } catch (e: unknown) {
+      if (e instanceof Error && 'statusCode' in e) throw e;
+      throw createHttpError('Refresh token inválido', 401);
     }
   }
 
   async me(userId: string) {
     const user = await userRepository.findById(userId);
     if (!user) {
-      const err: any = new Error('Usuario no encontrado');
-      err.statusCode = 404;
-      throw err;
+      throw createHttpError('Usuario no encontrado', 404);
     }
     return user.toJSON();
   }
