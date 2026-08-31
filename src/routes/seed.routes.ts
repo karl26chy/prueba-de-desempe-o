@@ -37,6 +37,7 @@ const router = Router();
  *       401: { description: No autenticado }
  *       403: { description: No autorizado }
  *       409: { description: Duplicado (email/nit/name) }
+ *       413: { description: Archivo demasiado grande (máximo 2 MB) }
  */
 router.post(
   '/import',

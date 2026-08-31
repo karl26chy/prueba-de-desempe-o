@@ -35,6 +35,10 @@ router.use(authenticate);
  *               quantity: { type: integer, minimum: 0 }
  *     responses:
  *       201: { description: Inventario creado }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: Almacén o medicamento no encontrado }
  *       409: { description: Inventario ya existe }
  */
 router.post('/', authorize('ADMIN'), validate(createInventorySchema), (req, res, next) => inventoryController.create(req, res, next));
@@ -48,6 +52,8 @@ router.post('/', authorize('ADMIN'), validate(createInventorySchema), (req, res,
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Lista de inventarios }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  */
 router.get('/', authorize('ADMIN'), (req, res, next) => inventoryController.getAll(req, res, next));
 
@@ -65,6 +71,9 @@ router.get('/', authorize('ADMIN'), (req, res, next) => inventoryController.getA
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Inventario }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  *       404: { description: No encontrado }
  */
 router.get('/:id', authorize('ADMIN'), validate(inventoryIdParamSchema), (req, res, next) => inventoryController.getById(req, res, next));
@@ -91,6 +100,10 @@ router.get('/:id', authorize('ADMIN'), validate(inventoryIdParamSchema), (req, r
  *               quantity: { type: integer, minimum: 0 }
  *     responses:
  *       200: { description: Inventario actualizado }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
  */
 router.put('/:id', authorize('ADMIN'), validate(updateInventorySchema), (req, res, next) => inventoryController.update(req, res, next));
 
@@ -108,6 +121,10 @@ router.put('/:id', authorize('ADMIN'), validate(updateInventorySchema), (req, re
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Inventario eliminado }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
  */
 router.delete('/:id', authorize('ADMIN'), validate(inventoryIdParamSchema), (req, res, next) => inventoryController.delete(req, res, next));
 
