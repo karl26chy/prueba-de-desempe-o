@@ -51,7 +51,7 @@ export class AuthService {
       const accessToken = signAccessToken(newPayload);
       const newRefreshToken = signRefreshToken(newPayload);
       return { accessToken, refreshToken: newRefreshToken };
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e instanceof Error && 'statusCode' in e) throw e;
       throw createHttpError('Refresh token inválido', 401);
     }
@@ -60,9 +60,7 @@ export class AuthService {
   async me(userId: string) {
     const user = await userRepository.findById(userId);
     if (!user) {
-      const err: any = new Error('Usuario no encontrado');
-      err.statusCode = 404;
-      throw err;
+      throw createHttpError('Usuario no encontrado', 404);
     }
     return user.toJSON();
   }

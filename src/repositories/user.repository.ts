@@ -1,4 +1,4 @@
-import { User, UserRole } from '../models/user.model';
+import { User, UserRole, UserCreationAttributes } from '../models/user.model';
 
 export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
@@ -21,13 +21,13 @@ export class UserRepository {
   }
 
   async create(data: { name: string; email: string; password: string; role?: UserRole }): Promise<User> {
-    return User.create(data as any);
+    return User.create(data as UserCreationAttributes);
   }
 
   async update(id: string, data: Partial<{ name: string; email: string; role: UserRole }>): Promise<User | null> {
     const user = await User.findByPk(id);
     if (!user || !user.isActive) return null;
-    await user.update(data as any);
+    await user.update(data);
     return user;
   }
 
@@ -35,7 +35,7 @@ export class UserRepository {
   async delete(id: string): Promise<boolean> {
     const user = await User.findByPk(id);
     if (!user || !user.isActive) return false;
-    await user.update({ isActive: false } as any);
+    await user.update({ isActive: false });
     return true;
   }
 }

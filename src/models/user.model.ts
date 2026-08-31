@@ -30,7 +30,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   // Ocultar password al serializar
   toJSON(): Omit<UserAttributes, 'password'> {
     const values = { ...(this.get() as UserAttributes) };
-    delete (values as any).password;
+    delete (values as { password?: string }).password;
     return values;
   }
 }

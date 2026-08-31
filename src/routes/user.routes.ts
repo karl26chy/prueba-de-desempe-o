@@ -66,7 +66,7 @@ router.get('/:id', validate(userIdParamSchema), (req, res, next) => userControll
  *             properties:
  *               name: { type: string }
  *               email: { type: string }
- *               role: { type: string, enum: [user, admin] }
+ *               role: { type: string, enum: [ADMIN, GESTOR_SOLICITUDES] }
  *     responses:
  *       200: { description: Usuario actualizado }
  */
