@@ -7,8 +7,9 @@ services:
       POSTGRES_DB: ${DB_NAME:-app_db}
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    # Host port 5433 to avoid conflict with host postgres on 5432; app uses internal db:5432 via DB_HOST=db
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -22,7 +23,7 @@ services:
     container_name: app_backend
     restart: unless-stopped
     ports:
-      - "${PORT:-3000}:3000"
+      - "3001:3000"
     env_file:
       - .env
     environment:
@@ -32,6 +33,12 @@ services:
       db:
         condition: service_healthy
     command: node dist/server.js
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 volumes:
   pgdata:
