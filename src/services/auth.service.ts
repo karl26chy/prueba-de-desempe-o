@@ -1,9 +1,10 @@
 import { userRepository } from '../repositories/user.repository';
+import { UserRole } from '../models/user.model';
 import { hashPassword, comparePassword } from '../utils/password';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/jwt';
 
 export class AuthService {
-  async register(data: { name: string; email: string; password: string; role?: 'user' | 'admin' }) {
+  async register(data: { name: string; email: string; password: string; role?: UserRole }) {
     const exists = await userRepository.findByEmail(data.email);
     if (exists) {
       const err: any = new Error('Email ya registrado');

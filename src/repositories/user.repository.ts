@@ -1,4 +1,4 @@
-import { User } from '../models/user.model';
+import { User, UserRole } from '../models/user.model';
 
 export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
@@ -13,11 +13,11 @@ export class UserRepository {
     return User.findAll({ order: [['createdAt', 'DESC']] });
   }
 
-  async create(data: { name: string; email: string; password: string; role?: 'user' | 'admin' }): Promise<User> {
-    return User.create(data);
+  async create(data: { name: string; email: string; password: string; role?: UserRole }): Promise<User> {
+    return User.create(data as any);
   }
 
-  async update(id: string, data: Partial<{ name: string; email: string; role: 'user' | 'admin' }>): Promise<User | null> {
+  async update(id: string, data: Partial<{ name: string; email: string; role: UserRole }>): Promise<User | null> {
     const user = await User.findByPk(id);
     if (!user) return null;
     await user.update(data as any);

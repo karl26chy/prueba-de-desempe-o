@@ -1,26 +1,31 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
 
+export const USER_ROLES = ['ADMIN', 'GESTOR_SOLICITUDES'] as const;
+export type UserRole = (typeof USER_ROLES)[number];
+
 export interface UserAttributes {
   id: string;
   name: string;
   email: string;
   password: string;
-  role: 'user' | 'admin';
+  role: UserRole;
+  isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'role' | 'createdAt' | 'updatedAt'> {}
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'role' | 'isActive' | 'createdAt' | 'updatedAt'> {}
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-  public id!: string;
-  public name!: string;
-  public email!: string;
-  public password!: string;
-  public role!: 'user' | 'admin';
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: string;
+  declare name: string;
+  declare email: string;
+  declare password: string;
+  declare role: UserRole;
+  declare isActive: boolean;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 
   // Ocultar password al serializar
   toJSON(): Omit<UserAttributes, 'password'> {
@@ -52,8 +57,14 @@ User.init(
       allowNull: false,
     },
     role: {
-      type: DataTypes.ENUM('user', 'admin'),
-      defaultValue: 'user',
+      type: DataTypes.STRING,
+      defaultValue: 'GESTOR_SOLICITUDES',
+      allowNull: false,
+      validate: { isIn: [USER_ROLES as unknown as string[]] },
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
       allowNull: false,
     },
   },

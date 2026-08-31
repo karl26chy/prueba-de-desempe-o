@@ -1,4 +1,5 @@
 import { userRepository } from '../repositories/user.repository';
+import { UserRole } from '../models/user.model';
 
 export class UserService {
   async getAll() {
@@ -16,7 +17,7 @@ export class UserService {
     return user.toJSON();
   }
 
-  async update(id: string, data: Partial<{ name: string; email: string; role: 'user' | 'admin' }>) {
+  async update(id: string, data: Partial<{ name: string; email: string; role: UserRole }>) {
     const user = await userRepository.update(id, data);
     if (!user) {
       const err: any = new Error('Usuario no encontrado');
