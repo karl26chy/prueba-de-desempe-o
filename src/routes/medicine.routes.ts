@@ -35,6 +35,9 @@ router.use(authenticate);
  *               unit: { type: string }
  *     responses:
  *       201: { description: Medicamento creado }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  *       409: { description: Medicamento ya registrado }
  */
 router.post('/', authorize('ADMIN'), validate(createMedicineSchema), (req, res, next) => medicineController.create(req, res, next));
@@ -48,6 +51,8 @@ router.post('/', authorize('ADMIN'), validate(createMedicineSchema), (req, res, 
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Lista de medicamentos }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  */
 router.get('/', authorize('ADMIN'), (req, res, next) => medicineController.getAll(req, res, next));
 
@@ -65,6 +70,9 @@ router.get('/', authorize('ADMIN'), (req, res, next) => medicineController.getAl
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Medicamento }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  *       404: { description: No encontrado }
  */
 router.get('/:id', authorize('ADMIN'), validate(medicineIdParamSchema), (req, res, next) => medicineController.getById(req, res, next));
@@ -93,6 +101,10 @@ router.get('/:id', authorize('ADMIN'), validate(medicineIdParamSchema), (req, re
  *               unit: { type: string }
  *     responses:
  *       200: { description: Medicamento actualizado }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
  *       409: { description: Medicamento ya registrado }
  */
 router.put('/:id', authorize('ADMIN'), validate(updateMedicineSchema), (req, res, next) => medicineController.update(req, res, next));
@@ -111,6 +123,10 @@ router.put('/:id', authorize('ADMIN'), validate(updateMedicineSchema), (req, res
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Medicamento desactivado }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
  */
 router.delete('/:id', authorize('ADMIN'), validate(medicineIdParamSchema), (req, res, next) => medicineController.delete(req, res, next));
 

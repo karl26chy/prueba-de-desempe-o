@@ -19,6 +19,23 @@ router.use('/inventories', inventoryRoutes);
 router.use('/supply-requests', supplyRequestRoutes);
 router.use('/seed', seedRoutes);
 
+/**
+ * @swagger
+ * /api/health:
+ *   get:
+ *     summary: Healthcheck
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status: { type: string, example: ok }
+ *                 timestamp: { type: string, format: date-time }
+ */
 router.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });

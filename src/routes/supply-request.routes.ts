@@ -41,7 +41,11 @@ router.use(authenticate);
  *               quantity: { type: integer, minimum: 1 }
  *     responses:
  *       201: { description: Solicitud creada }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  *       404: { description: Clínica/medicamento/almacén no encontrado }
+ *       409: { description: Inventario insuficiente }
  */
 router.post(
   '/',
@@ -52,22 +56,67 @@ router.post(
 
 /**
  * @swagger
- * /api/supply-requests:
+ * /api/supply-requests/active:
  *   get:
- *     summary: Listar solicitudes
+ *     summary: Listar solicitudes activas
+ *     description: Devuelve solicitudes con estados PENDING y APPROVED
  *     tags: [SupplyRequests]
  *     security: [{ bearerAuth: [] }]
  *     responses:
- *       200: { description: Lista de solicitudes }
+ *       200: { description: Lista de solicitudes activas }
+ *       401: { description: No autenticado }
  */
 router.get('/active', authenticate, (req, res, next) => supplyRequestController.getActive(req, res, next));
 
+/**
+ * @swagger
+ * /api/supply-requests/history:
+ *   get:
+ *     summary: Historial completo de solicitudes
+ *     tags: [SupplyRequests]
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200: { description: Historial completo }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ */
 router.get('/history', authorize('ADMIN', 'GESTOR_SOLICITUDES'), (req, res, next) => supplyRequestController.getHistory(req, res, next));
 
+/**
+ * @swagger
+ * /api/supply-requests/history/{clinicId}:
+ *   get:
+ *     summary: Historial por clínica
+ *     tags: [SupplyRequests]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: clinicId
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *         description: ID de la clínica
+ *     responses:
+ *       200: { description: Historial de la clínica }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       404: { description: Clínica no encontrada }
+ */
 router.get('/history/:clinicId', authenticate, validate(historyClinicIdParamSchema), (req, res, next) =>
   supplyRequestController.getHistoryByClinic(req, res, next)
 );
 
+/**
+ * @swagger
+ * /api/supply-requests:
+ *   get:
+ *     summary: Listar todas las solicitudes
+ *     tags: [SupplyRequests]
+ *     security: [{ bearerAuth: [] }]
+ *     responses:
+ *       200: { description: Lista de solicitudes }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ */
 router.get('/', authorize('ADMIN'), (req, res, next) => supplyRequestController.getAll(req, res, next));
 
 /**
@@ -84,6 +133,9 @@ router.get('/', authorize('ADMIN'), (req, res, next) => supplyRequestController.
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Solicitud }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  *       404: { description: No encontrada }
  */
 router.get(
@@ -117,6 +169,10 @@ router.get(
  *               quantity: { type: integer, minimum: 1 }
  *     responses:
  *       200: { description: Solicitud actualizada }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrada }
  */
 router.put(
   '/:id',
@@ -139,6 +195,10 @@ router.put(
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Solicitud eliminada }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrada }
  */
 router.delete(
   '/:id',

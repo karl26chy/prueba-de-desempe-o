@@ -34,6 +34,9 @@ router.use(authenticate);
  *               location: { type: string }
  *     responses:
  *       201: { description: Almacén creado }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  */
 router.post('/', authorize('ADMIN'), validate(createWarehouseSchema), (req, res, next) => warehouseController.create(req, res, next));
 
@@ -46,6 +49,8 @@ router.post('/', authorize('ADMIN'), validate(createWarehouseSchema), (req, res,
  *     security: [{ bearerAuth: [] }]
  *     responses:
  *       200: { description: Lista de almacenes }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  */
 router.get('/', authorize('ADMIN'), (req, res, next) => warehouseController.getAll(req, res, next));
 
@@ -63,6 +68,9 @@ router.get('/', authorize('ADMIN'), (req, res, next) => warehouseController.getA
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Almacén }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
  *       404: { description: No encontrado }
  */
 router.get('/:id', authorize('ADMIN'), validate(warehouseIdParamSchema), (req, res, next) => warehouseController.getById(req, res, next));
@@ -90,6 +98,10 @@ router.get('/:id', authorize('ADMIN'), validate(warehouseIdParamSchema), (req, r
  *               location: { type: string }
  *     responses:
  *       200: { description: Almacén actualizado }
+ *       400: { description: Validación fallida }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
  */
 router.put('/:id', authorize('ADMIN'), validate(updateWarehouseSchema), (req, res, next) => warehouseController.update(req, res, next));
 
@@ -107,6 +119,10 @@ router.put('/:id', authorize('ADMIN'), validate(updateWarehouseSchema), (req, re
  *         schema: { type: string, format: uuid }
  *     responses:
  *       200: { description: Almacén desactivado }
+ *       400: { description: UUID inválido }
+ *       401: { description: No autenticado }
+ *       403: { description: No autorizado }
+ *       404: { description: No encontrado }
  */
 router.delete('/:id', authorize('ADMIN'), validate(warehouseIdParamSchema), (req, res, next) => warehouseController.delete(req, res, next));
 

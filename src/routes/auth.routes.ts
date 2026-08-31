@@ -33,6 +33,7 @@ const router = Router();
  *               role: { type: string, enum: [ADMIN, GESTOR_SOLICITUDES], example: GESTOR_SOLICITUDES }
  *     responses:
  *       201: { description: Usuario creado }
+ *       400: { description: Validación fallida }
  *       409: { description: Email ya registrado }
  */
 router.post('/register', validate(registerSchema), (req, res, next) => authController.register(req, res, next));
@@ -55,6 +56,7 @@ router.post('/register', validate(registerSchema), (req, res, next) => authContr
  *               password: { type: string, example: 123456 }
  *     responses:
  *       200: { description: Login exitoso }
+ *       400: { description: Validación fallida }
  *       401: { description: Credenciales inválidas }
  */
 router.post('/login', validate(loginSchema), (req, res, next) => authController.login(req, res, next));
@@ -76,6 +78,8 @@ router.post('/login', validate(loginSchema), (req, res, next) => authController.
  *               refreshToken: { type: string }
  *     responses:
  *       200: { description: Tokens renovados }
+ *       400: { description: Validación fallida }
+ *       401: { description: Refresh token inválido }
  */
 router.post('/refresh', validate(refreshSchema), (req, res, next) => authController.refresh(req, res, next));
 
