@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
+import { UserRole } from '../models/user.model';
 
 export interface JwtPayload {
   id: string;
   email: string;
-  role: string;
+  role: UserRole;
 }
 
 export const signAccessToken = (payload: JwtPayload): string => {

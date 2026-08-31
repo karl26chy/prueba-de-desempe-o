@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authController } from '../controllers/auth.controller';
 import { validate } from '../middlewares/validate.middleware';
 import { registerSchema, loginSchema, refreshSchema } from '../validators/auth.validator';
-import { authenticate } from '../middlewares/auth.middleware';
+import { authenticate, AuthRequest } from '../middlewares/auth.middleware';
 
 const router = Router();
 
@@ -30,7 +30,7 @@ const router = Router();
  *               name: { type: string, example: Carlos }
  *               email: { type: string, example: carlos@test.com }
  *               password: { type: string, example: 123456 }
- *               role: { type: string, enum: [user, admin], example: user }
+ *               role: { type: string, enum: [ADMIN, GESTOR_SOLICITUDES], example: GESTOR_SOLICITUDES }
  *     responses:
  *       201: { description: Usuario creado }
  *       409: { description: Email ya registrado }
@@ -90,6 +90,6 @@ router.post('/refresh', validate(refreshSchema), (req, res, next) => authControl
  *       200: { description: Perfil }
  *       401: { description: No autenticado }
  */
-router.get('/me', authenticate, (req, res, next) => authController.me(req as any, res, next));
+router.get('/me', authenticate, (req, res, next) => authController.me(req as AuthRequest, res, next));
 
 export default router;
