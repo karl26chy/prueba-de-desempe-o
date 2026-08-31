@@ -434,7 +434,8 @@ Branches: `develop`, `main`, `feature/*` (`auth-roles`, `clinics`, `warehouses`,
 
 ## 27. Coder / Clan Information
 
-No `coder`/`clan` metadata found in repository (`README.md` before, `package.json`, `src/`). Not invented — omitted as per requirement.
+* **Coder:** Carlos Charris Yepes
+* **Clan:** Node.js / Nest — AM
 
 ---
 

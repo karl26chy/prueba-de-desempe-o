@@ -70,5 +70,12 @@ export const env = {
     refreshExpiresIn: p.JWT_REFRESH_EXPIRES_IN,
   },
   corsOrigin: p.CORS_ORIGIN,
-  apiUrl: p.API_URL || `http://localhost:${p.PORT}`,
+  // Fix Fase 13: when running in Docker (DB_HOST=db) host port is 3001:3000, so API_URL must be 3001 for Swagger to fetch correctly
+  apiUrl: (() => {
+    const base = p.API_URL || `http://localhost:${p.PORT}`;
+    if (p.DB_HOST === 'db' && base.includes(':3000')) {
+      return base.replace(':3000', ':3001');
+    }
+    return base;
+  })(),
 };
