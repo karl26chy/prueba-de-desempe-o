@@ -25,7 +25,7 @@ router.use(authenticate);
  *     responses:
  *       200: { description: Lista de usuarios }
  */
-router.get('/', (req, res, next) => userController.getAll(req, res, next));
+router.get('/', authorize('ADMIN'), (req, res, next) => userController.getAll(req, res, next));
 
 /**
  * @swagger
@@ -70,7 +70,7 @@ router.get('/:id', validate(userIdParamSchema), (req, res, next) => userControll
  *     responses:
  *       200: { description: Usuario actualizado }
  */
-router.put('/:id', validate(updateUserSchema), (req, res, next) => userController.update(req, res, next));
+router.put('/:id', validate(updateUserSchema), authorize('ADMIN'), (req, res, next) => userController.update(req, res, next));
 
 /**
  * @swagger
@@ -88,6 +88,6 @@ router.put('/:id', validate(updateUserSchema), (req, res, next) => userControlle
  *       200: { description: Eliminado }
  *       403: { description: No autorizado }
  */
-router.delete('/:id', authorize('admin'), validate(userIdParamSchema), (req, res, next) => userController.delete(req, res, next));
+router.delete('/:id', validate(userIdParamSchema), authorize('ADMIN'), (req, res, next) => userController.delete(req, res, next));
 
 export default router;
