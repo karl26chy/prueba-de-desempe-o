@@ -18,10 +18,14 @@ export const connectDB = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
     console.log('✅ PostgreSQL conectado vía Sequelize');
-    // Sync asegura creación de tablas si no existen (útil para Docker sin migraciones manuales)
-    // En prod ideal usar migraciones: npx sequelize-cli db:migrate
-    await sequelize.sync({ alter: false });
-    console.log('✅ Sync modelos');
+    // En desarrollo/test sync crea tablas faltantes automáticamente (útil para Docker sin migraciones manuales)
+    // En producción la estructura se gestiona solo con migraciones como fuente de verdad
+    if (env.nodeEnv !== 'production') {
+      await sequelize.sync({ alter: false });
+      console.log('✅ Sync modelos');
+    } else {
+      console.log('ℹ️ Sync omitido en producción (usar migraciones)');
+    }
   } catch (error) {
     console.error('❌ Error conectando a DB:', error);
     throw error;
