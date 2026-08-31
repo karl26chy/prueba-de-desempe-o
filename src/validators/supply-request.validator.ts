@@ -30,3 +30,9 @@ export const supplyRequestIdParamSchema = z.object({
     id: z.string().uuid('ID debe ser UUID'),
   }),
 });
+
+export const historyClinicIdParamSchema = z.object({
+  params: z.object({
+    clinicId: z.string().uuid('clinicId debe ser UUID'),
+  }),
+});
