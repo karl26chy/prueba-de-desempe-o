@@ -6,6 +6,7 @@ import {
   createSupplyRequestSchema,
   updateSupplyRequestSchema,
   supplyRequestIdParamSchema,
+  historyClinicIdParamSchema,
 } from '../validators/supply-request.validator';
 
 const router = Router();
@@ -44,7 +45,7 @@ router.use(authenticate);
  */
 router.post(
   '/',
-  authorize('ADMIN'),
+  authorize('ADMIN', 'GESTOR_SOLICITUDES'),
   validate(createSupplyRequestSchema),
   (req, res, next) => supplyRequestController.create(req as AuthRequest, res, next)
 );
@@ -59,6 +60,14 @@ router.post(
  *     responses:
  *       200: { description: Lista de solicitudes }
  */
+router.get('/active', authenticate, (req, res, next) => supplyRequestController.getActive(req, res, next));
+
+router.get('/history', authorize('ADMIN', 'GESTOR_SOLICITUDES'), (req, res, next) => supplyRequestController.getHistory(req, res, next));
+
+router.get('/history/:clinicId', authenticate, validate(historyClinicIdParamSchema), (req, res, next) =>
+  supplyRequestController.getHistoryByClinic(req, res, next)
+);
+
 router.get('/', authorize('ADMIN'), (req, res, next) => supplyRequestController.getAll(req, res, next));
 
 /**
@@ -111,7 +120,7 @@ router.get(
  */
 router.put(
   '/:id',
-  authorize('ADMIN'),
+  authorize('ADMIN', 'GESTOR_SOLICITUDES'),
   validate(updateSupplyRequestSchema),
   (req, res, next) => supplyRequestController.update(req, res, next)
 );

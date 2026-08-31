@@ -23,6 +23,33 @@ export class SupplyRequestController {
     }
   }
 
+  async getActive(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const requests = await supplyRequestService.getActiveRequests();
+      res.json(requests);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getHistory(_req: Request, res: Response, next: NextFunction) {
+    try {
+      const requests = await supplyRequestService.getHistory();
+      res.json(requests);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getHistoryByClinic(req: Request, res: Response, next: NextFunction) {
+    try {
+      const requests = await supplyRequestService.getHistoryByClinicId(req.params.clinicId as string);
+      res.json(requests);
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const request = await supplyRequestService.getSupplyRequestById(req.params.id as string);

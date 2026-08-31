@@ -1,8 +1,24 @@
+import { Op } from 'sequelize';
 import { SupplyRequest, SupplyRequestCreationAttributes } from '../models/supply-request.model';
 
 export class SupplyRequestRepository {
   async findAll(): Promise<SupplyRequest[]> {
     return SupplyRequest.findAll({ order: [['createdAt', 'DESC']] });
+  }
+
+  async findActive(): Promise<SupplyRequest[]> {
+    return SupplyRequest.findAll({
+      where: { status: { [Op.in]: ['PENDING', 'APPROVED'] } },
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
+  async findHistory(): Promise<SupplyRequest[]> {
+    return SupplyRequest.findAll({ order: [['createdAt', 'DESC']] });
+  }
+
+  async findHistoryByClinicId(clinicId: string): Promise<SupplyRequest[]> {
+    return SupplyRequest.findAll({ where: { clinicId }, order: [['createdAt', 'DESC']] });
   }
 
   async findById(id: string): Promise<SupplyRequest | null> {

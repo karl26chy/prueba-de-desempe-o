@@ -2,6 +2,7 @@ import { supplyRequestRepository } from '../repositories/supply-request.reposito
 import { clinicRepository } from '../repositories/clinic.repository';
 import { medicineRepository } from '../repositories/medicine.repository';
 import { warehouseRepository } from '../repositories/warehouse.repository';
+import { inventoryRepository } from '../repositories/inventory.repository';
 import { SupplyRequestCreationAttributes, SupplyRequestStatus } from '../models/supply-request.model';
 
 function createHttpError(message: string, statusCode: number): Error & { statusCode: number } {
@@ -29,6 +30,11 @@ export class SupplyRequestService {
       if (!warehouse) {
         throw createHttpError('Almacén no encontrado', 404);
       }
+      // Verificar inventario suficiente para la combinación warehouse + medicine
+      const inventory = await inventoryRepository.findByWarehouseAndMedicine(data.warehouseId, data.medicineId);
+      if (!inventory || inventory.quantity < data.quantity) {
+        throw createHttpError('Inventario insuficiente', 409);
+      }
     }
     try {
       const request = await supplyRequestRepository.create(data as SupplyRequestCreationAttributes);
@@ -43,6 +49,25 @@ export class SupplyRequestService {
 
   async getSupplyRequests() {
     const requests = await supplyRequestRepository.findAll();
+    return requests.map((r) => r.toJSON());
+  }
+
+  async getActiveRequests() {
+    const requests = await supplyRequestRepository.findActive();
+    return requests.map((r) => r.toJSON());
+  }
+
+  async getHistory() {
+    const requests = await supplyRequestRepository.findHistory();
+    return requests.map((r) => r.toJSON());
+  }
+
+  async getHistoryByClinicId(clinicId: string) {
+    const clinic = await clinicRepository.findById(clinicId);
+    if (!clinic) {
+      throw createHttpError('Clínica no encontrada', 404);
+    }
+    const requests = await supplyRequestRepository.findHistoryByClinicId(clinicId);
     return requests.map((r) => r.toJSON());
   }
 
@@ -86,8 +111,9 @@ export class SupplyRequestService {
     if (!request) {
       throw createHttpError('Solicitud no encontrada', 404);
     }
-    const ok = await supplyRequestRepository.delete(id);
-    if (!ok) {
+    // Eliminación lógica mediante estado REJECTED, conserva el registro
+    const updated = await supplyRequestRepository.update(id, { status: 'REJECTED' as SupplyRequestStatus });
+    if (!updated) {
       throw createHttpError('Solicitud no encontrada', 404);
     }
     return { message: 'Solicitud de suministro eliminada' };
