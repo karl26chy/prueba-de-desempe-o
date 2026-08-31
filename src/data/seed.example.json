@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "name": "Admin Ejemplo",
+      "email": "admin.ejemplo@test.com",
+      "password": "123456",
+      "role": "ADMIN"
+    },
+    {
+      "name": "Gestor Ejemplo",
+      "email": "gestor.ejemplo@test.com",
+      "password": "123456",
+      "role": "GESTOR_SOLICITUDES"
+    }
+  ],
+  "clinics": [
+    {
+      "name": "Clínica Central Ejemplo",
+      "nit": "900123456",
+      "address": "Calle 123 #45-67, Bogotá",
+      "phone": "3001234567"
+    },
+    {
+      "name": "Clínica Norte Ejemplo",
+      "nit": "900123457",
+      "address": "Carrera 10 #20-30, Medellín",
+      "phone": "3007654321"
+    }
+  ],
+  "warehouses": [
+    {
+      "name": "Bodega Norte Ejemplo",
+      "location": "Zona Franca, Bodega 12"
+    },
+    {
+      "name": "Bodega Sur Ejemplo",
+      "location": "Parque Industrial, Lote 5"
+    }
+  ],
+  "medicines": [
+    {
+      "name": "Paracetamol Ejemplo",
+      "description": "Analgésico y antipirético",
+      "unit": "mg"
+    },
+    {
+      "name": "Ibuprofeno Ejemplo",
+      "description": "Antiinflamatorio no esteroideo",
+      "unit": "mg"
+    }
+  ]
+}
