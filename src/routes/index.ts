@@ -5,6 +5,7 @@ import clinicRoutes from './clinic.routes';
 import warehouseRoutes from './warehouse.routes';
 import medicineRoutes from './medicine.routes';
 import inventoryRoutes from './inventory.routes';
+import supplyRequestRoutes from './supply-request.routes';
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.use('/clinics', clinicRoutes);
 router.use('/warehouses', warehouseRoutes);
 router.use('/medicines', medicineRoutes);
 router.use('/inventories', inventoryRoutes);
+router.use('/supply-requests', supplyRequestRoutes);
 
 router.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
